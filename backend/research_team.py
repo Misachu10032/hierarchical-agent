@@ -6,6 +6,8 @@ from langgraph.types import Command
 from research_tool import tavily_tool,scrape_webpages
 from supervisor_node import make_supervisor_node
 from models import State
+from utils.fomat_and_emit import format_and_emit
+
 
 llm = ChatOpenAI(model="gpt-4o")
 
@@ -14,6 +16,8 @@ search_agent = create_react_agent(llm, tools=[tavily_tool])
 
 def search_node(state: State) -> Command[Literal["supervisor"]]:
     result = search_agent.invoke(state)
+
+    format_and_emit(result,"search")
     return Command(
         update={
             "messages": [
@@ -30,6 +34,7 @@ web_scraper_agent = create_react_agent(llm, tools=[scrape_webpages])
 
 def web_scraper_node(state: State) -> Command[Literal["supervisor"]]:
     result = web_scraper_agent.invoke(state)
+    format_and_emit(result,"web_scraper")
     return Command(
         update={
             "messages": [

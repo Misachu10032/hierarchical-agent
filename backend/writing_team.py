@@ -6,6 +6,7 @@ from langgraph.types import Command
 from research_tool import tavily_tool, scrape_webpages
 from supervisor_node import State, make_supervisor_node
 from writing_tool import write_document, edit_document, read_document, create_outline, python_repl_tool
+from utils.fomat_and_emit import format_and_emit
 
 llm = ChatOpenAI(model="gpt-4o")
 
@@ -24,6 +25,7 @@ doc_writer_agent = create_react_agent(
 
 def doc_writing_node(state: State) -> Command[Literal["supervisor"]]:
     result = doc_writer_agent.invoke(state)
+    format_and_emit(result,"doc_writer")
     return Command(
         update={
             "messages": [
@@ -48,6 +50,7 @@ note_taking_agent = create_react_agent(
 
 def note_taking_node(state: State) -> Command[Literal["supervisor"]]:
     result = note_taking_agent.invoke(state)
+    format_and_emit(result,"note_taker")
     return Command(
         update={
             "messages": [
@@ -67,6 +70,7 @@ chart_generating_agent = create_react_agent(
 
 def chart_generating_node(state: State) -> Command[Literal["supervisor"]]:
     result = chart_generating_agent.invoke(state)
+    format_and_emit(result,"chart_generator")
     return Command(
         update={
             "messages": [

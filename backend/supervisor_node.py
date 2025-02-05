@@ -5,7 +5,7 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.types import Command
 from langchain_core.messages import HumanMessage, trim_messages
 from models import State
-
+from flask_socketio import  emit
 
 
 def make_supervisor_node(llm: BaseChatModel, members: list[str]) -> str:
@@ -29,6 +29,7 @@ def make_supervisor_node(llm: BaseChatModel, members: list[str]) -> str:
             {"role": "system", "content": system_prompt},
         ] + state["messages"]
         response = llm.with_structured_output(Router).invoke(messages)
+   
         goto = response["next"]
         if goto == "FINISH":
             goto = END

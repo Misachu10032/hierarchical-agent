@@ -52,13 +52,13 @@
           ref="responseContainer"
           class="h-80 overflow-auto border p-4 rounded bg-gray-50"
         >
-          <div v-for="(message, index) in messages" :key="index">
+          <div v-for="(detail, index) in details" :key="index">
             <p class="text-lg text-gray-700 py-2">
-              {{ message }}
+              {{ detail }}
             </p>
             <!-- Dark Bold Separator -->
             <hr
-              v-if="index < messages.length - 1"
+              v-if="index < details.length - 1"
               class="border-t-2 border-gray-700 my-2"
             />
           </div>
@@ -78,6 +78,7 @@ export default {
     return {
       question: "",
       messages: [],
+      details:[],
       socket: null,
     };
   },
@@ -86,6 +87,7 @@ export default {
       if (!this.question.trim()) return;
 
       this.messages = [];
+      this.details = [];
       this.socket.emit("ask_question", { question: this.question });
     },
     autoScroll() {
@@ -106,6 +108,10 @@ export default {
 
     this.socket.on("stream_data", (data) => {
       this.messages.push(data);
+      this.autoScroll();
+    });
+    this.socket.on("detailed_data", (data) => {
+      this.details.push(data);
       this.autoScroll();
     });
 
